@@ -1,0 +1,46 @@
+td,th{
+		border: solid 1px #000;
+		width: 110px
+	}
+	td{
+		padding: 5px;
+		border: none;
+		border-right: solid 1px #aba3a3;
+		border-bottom: solid 1px #aba3a3;
+	}
+	.blinker{
+		display:inline;
+		animation: blinking .5s infinite alternate;
+	}
+	#infoTaxis span {
+		display: inline-block;
+		width: 160px;
+		padding: 5px;
+		border:solid 2px #fff;
+		padding-right: 30px;		
+		background-color: #f3eaea;
+	}
+	body > p:nth-child(3){	
+		margin: 30px 0 0;
+		background-color: lightgray;
+		width: 596px;
+		text-align: center;
+		font-size: 1.2em;
+		letter-spacing: 2px;
+	}
+	#infoTaxis{margin:0	}
+	
+	.hidetaxi{
+		display:none
+	}
+	@keyframes blinking{
+		0%{
+			opacity: 0;
+			transform: translateX(0px);
+		}
+		100%{
+			opacity: 1;
+			transform: translateX(10px);
+		}
+	}
+	
