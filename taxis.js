@@ -26,6 +26,20 @@ function CallTaxi(taxi) {
                     totalFare += nearestTaxi.distance * baseFare;
                     CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
                    
+                        status = "running";
+                        CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+                        taxiRunTime = setInterval(function() {
+                            distLeft -= speed;
+                            //console.log(id + ":" + distLeft);
+                            if (distLeft <= 0) {
+                                clearInterval(taxiRunTime);
+                                status = "ready";
+                                CallTaxiPool.update(id, "ready", customer, destination, destination, 0, totalFare);
+                            } else {
+                                CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+                            }
+                        }, 10000);
+                  
                     return true;
                 } else {
                     return false;
@@ -49,7 +63,6 @@ var CallTaxiPool = {
         }
         var _obj = { id: taxi, currentLoc: "a", status: "ready", destination: "a", customer: "", distance: 0, total: 0 };
         this.alltaxis.push(_obj);
-        
         this.taxiNameList.push(taxi);
         $("#cab_name").append("<option value='" + taxi + "'>" + taxi + "</option>");
         return _obj;
@@ -84,7 +97,22 @@ var CallTaxiPool = {
         });
 
 
+        for (var alls in myTaxiClone) {
+            var _end = routesequence.indexOf(end);
+            var _curr = routesequence.indexOf(myTaxiClone[alls].currentLoc);
+            myTaxiClone[alls].distance = 50 * Math.abs(_apoint - _end);
+            myTaxiClone[alls].pickDist = Math.abs(_apoint - _curr);
+        }
 
+        myTaxiClone.sort(function(a, b) {
+            return a.pickDist - b.pickDist;
+        });
+
+        if (myTaxiClone.length == 1) {
+            return myTaxiClone[0];
+        }
+
+        
         return false;
     },
     update: function(id, state, customer, pickup, end, dist, tot) {
@@ -99,7 +127,30 @@ var CallTaxiPool = {
                 alltaxiLen[z].total = tot;
             }
         }
+    },
+    lookup: {
+        cabsnum: 0,
+        search: function(n, p, d) {
+            if (CallTaxiPool.lookup.cabsnum > 0) {
+                
+                    $("#searchlog").text("Searching...");
+                    var mycab = $("#cab_name").val();
+                    var strictSearch = mycab == "none" ? "" : mycab;
+                    if (strictSearch != "" && CallTaxiPool.taxiNameList.indexOf(mycab) == -1) {
+                        $("#searchlog").text("Not Found");
+                        $("#submitPickup").prop("disabled", false);
+                    }else {
+                        $("#searchlog").text("");
+                        $("#submitPickup").prop("disabled", false);
+                    }
+              
+            } else {
+                $("#searchlog").text("Not available");
+                $("#submitPickup").prop("disabled", false);
+            }
+        }
     }
+ 
     
 };
 
@@ -118,7 +169,8 @@ $("#submitPickup").click(function() {
     var drop = $("#dropSel").val();
     if (pick != drop) {
         $("#submitPickup").prop("disabled", true);
-        
+        CallTaxiPool.lookup.cabsnum = CallTaxiPool.alltaxis.length - 1;
+        CallTaxiPool.lookup.search("xxx", pick, drop);
     }
 
 });
