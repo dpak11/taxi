@@ -1,21 +1,21 @@
 function CallTaxi(taxi) {
-    var taxiObj = CallTaxiPool.add(taxi);
+    let taxiObj = CallTaxiPool.add(taxi);
     if (taxiObj) {
-        var startPoint = taxiObj.currentLoc;
-        var destination = taxiObj.destination;
-        var customer = taxiObj.customer;
-        var id = taxiObj.id;
-        var status = taxiObj.status;
-        var taxiRunTime;
-        var distLeft = 0;
-        var totalFare = 0;
-        var baseFare = 7; // Rs per Km
-        var speed = 2 // kms in 10 seconds
+        let startPoint = taxiObj.currentLoc;
+        let destination = taxiObj.destination;
+        let customer = taxiObj.customer;
+        let id = taxiObj.id;
+        let status = taxiObj.status;
+        let taxiRunTime;
+        let distLeft = 0;
+        let totalFare = 0;
+        let baseFare = 7; // Rs per Km
+        let speed = 2 // kms in 10 seconds
         this.pickme = function(cust, pickup, dest, strictTaxi) {
             if (pickup == dest) {
                 return false;
             }
-            var nearestTaxi = CallTaxiPool.nearest(pickup, dest, id, strictTaxi);
+            let nearestTaxi = CallTaxiPool.nearest(pickup, dest, id, strictTaxi);
             if (nearestTaxi) {
                 if (nearestTaxi.id == id) {
                     status = "picking up...";
@@ -33,7 +33,6 @@ function CallTaxi(taxi) {
                         CallTaxiPool.displayStatus();
                         taxiRunTime = setInterval(function() {
                             distLeft -= speed;
-                            //console.log(id + ":" + distLeft);
                             if (distLeft <= 0) {
                                 clearInterval(taxiRunTime);
                                 status = "ready";
@@ -55,33 +54,33 @@ function CallTaxi(taxi) {
     }
 }
 
-var CallTaxiPool = {
+const CallTaxiPool = {
     alltaxis: [],
     taxiNameList: [],
     add: function(taxi) {
-        for (var i in this.alltaxis) {
+        for (let i in this.alltaxis) {
             if (this.alltaxis[i].id.toLowerCase() == taxi.toLowerCase()) {
                 console.log("Taxi Duplicate")
                 return false;
             }
         }
-        var _obj = { id: taxi, currentLoc: "a", status: "ready", destination: "a", customer: "", distance: 0, total: 0 };
+        let _obj = { id: taxi, currentLoc: "a", status: "ready", destination: "a", customer: "", distance: 0, total: 0 };
         this.alltaxis.push(_obj);
         this.displayStatus(taxi, "ready", "", "a", "a", 0);
         this.taxiNameList.push(taxi);
-        $("#cab_name").append("<option value='" + taxi + "'>" + taxi + "</option>");
+        $("#cab_name").append(`<option value='${taxi}'>${taxi}</option>`);
         return _obj;
     },
     nearest: function(pick, end, txid, strictlyTaxi) {
-        var routesequence = "abcdefghij";
-        var _apoint = routesequence.indexOf(pick);
+        let routesequence = "abcdefghij";
+        let _apoint = routesequence.indexOf(pick);
 
         //var readyNearTaxis = [];
-        var myTaxiClone = JSON.parse(JSON.stringify(CallTaxiPool.alltaxis));
+        let myTaxiClone = JSON.parse(JSON.stringify(CallTaxiPool.alltaxis));
 
-        for (var j in myTaxiClone) {
+        for (let j in myTaxiClone) {
             if (myTaxiClone[j].status == "ready") {
-                var _end = routesequence.indexOf(end);
+                let _end = routesequence.indexOf(end);
                 if (txid == myTaxiClone[j].id && strictlyTaxi == txid) {
                     myTaxiClone[j].distance = 50 * Math.abs(_apoint - _end);
                     return myTaxiClone[j];
@@ -102,9 +101,9 @@ var CallTaxiPool = {
         });
 
 
-        for (var alls in myTaxiClone) {
-            var _end = routesequence.indexOf(end);
-            var _curr = routesequence.indexOf(myTaxiClone[alls].currentLoc);
+        for (let alls in myTaxiClone) {
+            let _end = routesequence.indexOf(end);
+            let _curr = routesequence.indexOf(myTaxiClone[alls].currentLoc);
             myTaxiClone[alls].distance = 50 * Math.abs(_apoint - _end);
             myTaxiClone[alls].pickDist = Math.abs(_apoint - _curr);
         }
@@ -121,7 +120,7 @@ var CallTaxiPool = {
             return elem.pickDist === myTaxiClone[0].pickDist;
         });
 
-        for (var fx in myTaxiClone) {
+        for (let fx in myTaxiClone) {
             if (myTaxiClone[fx].id == txid) {
                 return myTaxiClone[fx];
             }
@@ -134,8 +133,8 @@ var CallTaxiPool = {
         return false;
     },
     update: function(id, state, customer, pickup, end, dist, tot) {
-        var alltaxiLen = CallTaxiPool.alltaxis;
-        for (var z in CallTaxiPool.alltaxis) {
+        let alltaxiLen = CallTaxiPool.alltaxis;
+        for (let z in CallTaxiPool.alltaxis) {
             if (alltaxiLen[z].id == id) {
                 alltaxiLen[z].status = state;
                 alltaxiLen[z].customer = customer;
@@ -152,8 +151,8 @@ var CallTaxiPool = {
             if (CallTaxiPool.lookup.cabsnum > 0) {
                 setTimeout(function() {
                     $("#searchlog").text("Searching...");
-                    var mycab = $("#cab_name").val();
-                    var strictSearch = mycab == "none" ? "" : mycab;
+                    let mycab = $("#cab_name").val();
+                    let strictSearch = mycab == "none" ? "" : mycab;
                     if (strictSearch != "" && CallTaxiPool.taxiNameList.indexOf(mycab) == -1) {
                         $("#searchlog").text("Not Found");
                         $("#submitPickup").prop("disabled", false);
@@ -172,25 +171,26 @@ var CallTaxiPool = {
         }
     },
     getInfo: function() {
-        var txi = this.alltaxis;
-        var tax = "";
-        for (var i = 0; i < txi.length; i++) {
-            tax += "<span>" + txi[i].id + "</span><span> Remaining: " + txi[i].distance + "Kms </span><span> Total(All trips): Rs." + txi[i].total + "</span><br/>";
+        let txi = this.alltaxis;
+        let tax = "";
+        for (let i = 0; i < txi.length; i++) {
+            tax += `<span>${txi[i].id}</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
+            
         }
         $("#infoTaxis").html(tax);
     },
     displayStatus: function() {
-        var alph = "abcdefghij";
-        for (var i = 0; i < 10; i++) {
+        let alph = "abcdefghij";
+        for (let i = 0; i < 10; i++) {
             document.getElementById("col-point-" + alph.substr(i, 1)).innerHTML = "";
             document.getElementById("col-halt-" + alph.substr(i, 1)).innerHTML = "";
         }
 
-        for (var disp in this.alltaxis) {
-            var cell1 = document.getElementById("col-point-" + this.alltaxis[disp].currentLoc);
-            var cell2 = document.getElementById("col-halt-" + this.alltaxis[disp].destination);
-            var activetxt1 = "";
-            var activetxt2 = "";
+        for (let disp in this.alltaxis) {
+            let cell1 = document.getElementById("col-point-" + this.alltaxis[disp].currentLoc);
+            let cell2 = document.getElementById("col-halt-" + this.alltaxis[disp].destination);
+            let activetxt1 = "";
+            let activetxt2 = "";
             if (this.alltaxis[disp].status == "ready") {
                 activetxt1 = "<span class='' style = 'color:#000;font-weight:bold'>";
             } else if (this.alltaxis[disp].status == "running") {
@@ -198,32 +198,32 @@ var CallTaxiPool = {
             } else {
                 activetxt1 = "<span class='' style = 'color:grey;font-weight:normal'>";
             }
-            cell1.innerHTML = cell1.innerHTML + activetxt1 + this.alltaxis[disp].id + " (" + this.alltaxis[disp].status + ")</span><br/><br/>";
+            cell1.innerHTML = `${cell1.innerHTML} ${activetxt1} ${this.alltaxis[disp].id} (${this.alltaxis[disp].status})</span><br/><br/>`;
 
             if (this.alltaxis[disp].status == "running") {
-                activetxt2 = "<span class='blinker " + this.alltaxis[disp].id + "'>";
+                activetxt2 = `<span class='blinker ${this.alltaxis[disp].id}'>`;
             } else {
                 activetxt2 = "<span class='hidetaxi'>";
             }
-            cell2.innerHTML = cell2.innerHTML + activetxt2 + this.alltaxis[disp].id + "</span><br/><br/>";
+            cell2.innerHTML = `${cell2.innerHTML} ${activetxt2} ${this.alltaxis[disp].id} </span><br/><br/>`;
 
         }
     }
 };
 
-var ola = new CallTaxi("ola");
-var uber = new CallTaxi("uber");
-var zoomcar = new CallTaxi("zoomcar");
-var fastrack = new CallTaxi("fastrack");
-var maxicabs = new CallTaxi("maxicabs");
-var chennaicalltaxi = new CallTaxi("chennaicalltaxi");
+let ola = new CallTaxi("ola");
+let uber = new CallTaxi("uber");
+let zoomcar = new CallTaxi("zoomcar");
+let fastrack = new CallTaxi("fastrack");
+let maxicabs = new CallTaxi("maxicabs");
+let chennaicalltaxi = new CallTaxi("chennaicalltaxi");
 
-var taxiInstances = [ola, uber, zoomcar, fastrack, chennaicalltaxi, maxicabs];
+let taxiInstances = [ola, uber, zoomcar, fastrack, chennaicalltaxi, maxicabs];
 
 
 $("#submitPickup").click(function() {
-    var pick = $("#pickupSel").val();
-    var drop = $("#dropSel").val();
+    let pick = $("#pickupSel").val();
+    let drop = $("#dropSel").val();
     if (pick != drop) {
         $("#submitPickup").prop("disabled", true);
         CallTaxiPool.lookup.cabsnum = CallTaxiPool.alltaxis.length - 1;
