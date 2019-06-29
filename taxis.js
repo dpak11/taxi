@@ -1,58 +1,4 @@
-function CallTaxi(taxi) {
-    let taxiObj = CallTaxiPool.add(taxi);
-    if (taxiObj) {
-        let startPoint = taxiObj.currentLoc;
-        let destination = taxiObj.destination;
-        let customer = taxiObj.customer;
-        let id = taxiObj.id;
-        let status = taxiObj.status;
-        let taxiRunTime;
-        let distLeft = 0;
-        let totalFare = 0;
-        let baseFare = 7; // Rs per Km
-        let speed = 2 // kms in 10 seconds
-        this.pickme = function(cust, pickup, dest, strictTaxi) {
-            if (pickup == dest) {
-                return false;
-            }
-            let nearestTaxi = CallTaxiPool.nearest(pickup, dest, id, strictTaxi);
-            if (nearestTaxi) {
-                if (nearestTaxi.id == id) {
-                    status = "picking up...";
-                    customer = cust;
-                    startPoint = pickup;
-                    destination = dest;
-                    distLeft = nearestTaxi.distance;
-                    totalFare += nearestTaxi.distance * baseFare;
-                    CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
-                    CallTaxiPool.displayStatus();
 
-                    setTimeout(function() {
-                        status = "running";
-                        CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
-                        CallTaxiPool.displayStatus();
-                        taxiRunTime = setInterval(function() {
-                            distLeft -= speed;
-                            if (distLeft <= 0) {
-                                clearInterval(taxiRunTime);
-                                status = "ready";
-                                CallTaxiPool.update(id, "ready", customer, destination, destination, 0, totalFare);
-                                CallTaxiPool.displayStatus();
-                            } else {
-                                CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
-                            }
-                        }, 10000);
-                    }, 10000);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-    }
-}
 
 const CallTaxiPool = {
     alltaxis: [],
@@ -70,7 +16,7 @@ const CallTaxiPool = {
         this.taxiNameList.push(taxi);
         $("#cab_name").append(`<option value='${taxi}'>${taxi}</option>`);
         return _obj;
-    },
+    },    
     nearest: function(pick, end, txid, strictlyTaxi) {
         let routesequence = "abcdefghij";
         let _apoint = routesequence.indexOf(pick);
@@ -170,14 +116,14 @@ const CallTaxiPool = {
             }
         }
     },
-    getInfo: function() {
+    getSummary: function() {
         let txi = this.alltaxis;
-        let tax = "";
+        let summary = "";
         for (let i = 0; i < txi.length; i++) {
-            tax += `<span>${txi[i].id}</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
+            summary += `<span>${txi[i].id}</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
             
         }
-        $("#infoTaxis").html(tax);
+        $("#infoTaxis").html(summary);
     },
     displayStatus: function() {
         let alph = "abcdefghij";
@@ -211,6 +157,62 @@ const CallTaxiPool = {
     }
 };
 
+function CallTaxi(taxi) {
+    let taxiObj = CallTaxiPool.add(taxi);
+    if (taxiObj) {
+        let startPoint = taxiObj.currentLoc;
+        let destination = taxiObj.destination;
+        let customer = taxiObj.customer;
+        let id = taxiObj.id;
+        let status = taxiObj.status;
+        let taxiRunTime;
+        let distLeft = 0;
+        let totalFare = 0;
+        let baseFare = 7; // Rs per Km
+        let speed = 2 // kms in 10 seconds
+        this.pickme = function(cust, pickup, dest, strictTaxi) {
+            if (pickup == dest) {
+                return false;
+            }
+            let nearestTaxi = CallTaxiPool.nearest(pickup, dest, id, strictTaxi);
+            if (nearestTaxi) {
+                if (nearestTaxi.id == id) {
+                    status = "picking up...";
+                    customer = cust;
+                    startPoint = pickup;
+                    destination = dest;
+                    distLeft = nearestTaxi.distance;
+                    totalFare += nearestTaxi.distance * baseFare;
+                    CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
+                    CallTaxiPool.displayStatus();
+
+                    setTimeout(function() {
+                        status = "running";
+                        CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+                        CallTaxiPool.displayStatus();
+                        taxiRunTime = setInterval(function() {
+                            distLeft -= speed;
+                            if (distLeft <= 0) {
+                                clearInterval(taxiRunTime);
+                                status = "ready";
+                                CallTaxiPool.update(id, "ready", customer, destination, destination, 0, totalFare);
+                                CallTaxiPool.displayStatus();
+                            } else {
+                                CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+                            }
+                        }, 10000);
+                    }, 10000);
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+}
+
 let ola = new CallTaxi("ola");
 let uber = new CallTaxi("uber");
 let zoomcar = new CallTaxi("zoomcar");
@@ -233,5 +235,5 @@ $("#submitPickup").click(function() {
 });
 
 setInterval(function() {
-    CallTaxiPool.getInfo();
+    CallTaxiPool.getSummary();
 }, 5000);
