@@ -33,6 +33,32 @@ td,th{
 	.hidetaxi{
 		display:none
 	}
+	 #mapTable td {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background-color: #fff;
+		border: none;
+    }
+    #mapTable td.highlight{    	
+    	border: solid 1px #9c9393;
+    }
+
+    .activepoints{
+    	background-color: rgb(73, 177, 216) !important;    	
+		
+    }
+    .makered{
+    	background-color: red !important;
+    }
+
+
+    .cabnames{
+    	background: rgb(241, 234, 234) !important;
+    	font-size: 1.4em;
+		border-radius: 0 !important;
+    }
+
 	@keyframes blinking{
 		0%{
 			opacity: 0;
