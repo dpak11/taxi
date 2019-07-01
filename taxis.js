@@ -3,16 +3,16 @@ const CallTaxiPool = {
     taxiNameList: [],
     add: function(taxi) {
         for (let i in this.alltaxis) {
-            if (this.alltaxis[i].id.toLowerCase() == taxi.toLowerCase()) {
-                console.log("Taxi Duplicate")
+            if (this.alltaxis[i].id.toLowerCase() == taxi.name.toLowerCase()) {
+                console.log("Taxi Duplicate");
                 return false;
             }
         }
-        let _obj = { id: taxi, currentLoc: "a", status: "ready", destination: "a", customer: "", distance: 0, total: 0 };
+        let _obj = { id: taxi.name, currentLoc: "a", status: "ready", destination: "a", customer: "", distance: 0, total: 0, price: taxi.cost };
         this.alltaxis.push(_obj);
-        this.displayStatus(taxi, "ready", "", "a", "a", 0);
-        this.taxiNameList.push(taxi);
-        $("#cab_name").append(`<option value='${taxi}'>${taxi}</option>`);
+        this.displayStatus(taxi.name, "ready", "", "a", "a", 0);
+        this.taxiNameList.push(taxi.name);
+        $("#cab_name").append(`<option value='${taxi.name}'>${taxi.name}</option>`);
         return _obj;
     },
     nearest: function(pick, end, txid, strictlyTaxi) {
@@ -118,7 +118,7 @@ const CallTaxiPool = {
         let txi = this.alltaxis;
         let summary = "";
         for (let i = 0; i < txi.length; i++) {
-            summary += `<span>${txi[i].id}</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
+            summary += `<span class="nameCaps">${txi[i].id} (Rs.${txi[i].price}/Km)</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
 
         }
         $("#infoTaxis").html(summary);
@@ -170,10 +170,10 @@ const DOMRoutePoints = {
     },
 
     init: function() {
-        let mapPlotStr = "0_0,0_92,0_93,1_1,1_32,1_33,1_71,1_72,1_73,1_89,1_90,1_91,1_94,2_2,2_3,2_13,2_14,2_15,2_16,2_17,2_31,2_34,2_70,2_74,2_88,2_95,3_4,3_9,3_10,3_11,3_12,3_18,3_28,3_29,3_30,3_31,3_35,3_54,3_55,3_70,3_75,3_87,3_96,4_5,4_6,4_7,4_8,4_9,4_19,4_28,4_36,4_53,4_56,4_71,4_75,4_86,4_97,5_20,5_21,5_22,5_26,5_27,5_28,5_37,5_38,5_39,5_40,5_52,5_55,5_64,5_65,5_66,5_72,5_76,5_85,5_98,5_99,6_23,6_24,6_25,6_26,6_41,6_52,6_55,6_58,6_59,6_63,6_67,6_68,6_69,6_72,6_77,6_84,7_42,7_52,7_55,7_57,7_60,7_61,7_62,7_70,7_72,7_78,7_83,8_43,8_44,8_45,8_46,8_47,8_48,8_49,8_50,8_51,8_56,8_70,8_72,8_79,8_80,8_81,8_82,9_71";
+        let mapPlotStr = "0_0,1_1,1_32,1_33,1_71,1_72,1_73,2_2,2_3,2_13,2_14,2_15,2_16,2_17,2_31,2_34,2_70,2_74,3_4,3_9,3_10,3_11,3_12,3_18,3_28,3_29,3_30,3_31,3_35,3_54,3_55,3_70,3_75,4_5,4_6,4_7,4_8,4_9,4_19,4_28,4_36,4_53,4_56,4_71,4_75,5_20,5_21,5_22,5_26,5_27,5_28,5_37,5_38,5_39,5_40,5_52,5_55,5_64,5_65,5_66,5_72,5_76,6_23,6_24,6_25,6_26,6_41,6_52,6_55,6_58,6_59,6_63,6_67,6_68,6_69,6_72,6_77,7_42,7_52,7_55,7_57,7_60,7_61,7_62,7_70,7_72,7_78,7_83,8_43,8_44,8_45,8_46,8_47,8_48,8_49,8_50,8_51,8_56,8_70,8_72,8_79,8_80,8_81,8_82,9_71";
 
         for (let z = 0; z < 6; z++) {
-            $("#mapTable tbody").append(`<tr><td colspan="30" class="cabnames">${CallTaxiPool.taxiNameList[z]}</td>`);
+            $("#mapTable tbody").append(`<tr><td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`);
             for (let i = 0; i < 10; i++) {
                 let row = `<tr class="map${z}_row${i}">`;
                 for (let j = 0; j < 100; j++) {
@@ -204,22 +204,22 @@ const DOMRoutePoints = {
         let taxiIndex = CallTaxiPool.taxiNameList.indexOf(name);
 
         let refObj = {
-            dom: function(elm,method) {
+            dom: function(elm, method) {
                 CallTaxiPool.alltaxis.forEach(function(t) {
                     if (t.id == name) {
-                    	if(method == "save"){
-                    		t.DOM_elm = elm;
-                    	}else if(t.DOM_elm){
-                    		$(t.DOM_elm).removeClass("mark-red");
-                    	}
-                        
+                        if (method == "save") {
+                            t.DOM_elm = elm;
+                        } else if (t.DOM_elm) {
+                            $(t.DOM_elm).removeClass("mark-red");
+                        }
+
                     }
                 });
             }
         };
 
-        if(status.includes("picking")){
-        	refObj.dom(null,"get");
+        if (status.includes("picking")) {
+            refObj.dom(null, "get");
         }
 
         let order = [];
@@ -252,13 +252,13 @@ const DOMRoutePoints = {
                 $(domEl).removeClass("activepoints mark-red");
                 if (seq == (seqlist.length - 1)) {
                     $(domEl).addClass("mark-red");
-                    refObj.dom(domEl,"save");
+                    refObj.dom(domEl, "save");
                 }
-            }else if(status.includes("picking")){
-            	if(seq == 0){
-            		$(domEl).addClass("mark-red");
-            	}
-            }else {
+            } else if (status.includes("picking")) {
+                if (seq == 0) {
+                    $(domEl).addClass("mark-red");
+                }
+            } else {
                 if ($(domEl).hasClass("activepoints") === false) {
                     $(domEl).addClass("activepoints");
                 }
@@ -273,6 +273,12 @@ const DOMRoutePoints = {
     }
 };
 
+function pageAutoScroll() {    
+    $('html,body').animate({
+            scrollTop: $("#subtab5").offset().top
+        }, 2000);
+}
+
 
 function CallTaxi(taxi) {
     let taxiObj = CallTaxiPool.add(taxi);
@@ -285,7 +291,7 @@ function CallTaxi(taxi) {
         let taxiRunTime;
         let distLeft = 0;
         let totalFare = 0;
-        let baseFare = 7; // Rs per Km
+        let baseFare = taxiObj.price; // Rs. per Km
         let speed = 2 // kms in 10 seconds
         this.pickme = function(cust, pickup, dest, strictTaxi) {
             if (pickup == dest) {
@@ -302,7 +308,8 @@ function CallTaxi(taxi) {
                     totalFare += nearestTaxi.distance * baseFare;
                     CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
                     CallTaxiPool.displayStatus();
-                    DOMRoutePoints.update(id, status, startPoint, destination, distLeft);
+                    DOMRoutePoints.update(id, status, startPoint, destination, distLeft);                    
+                    pageAutoScroll();                    
                     setTimeout(function() {
                         status = "running";
                         CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
@@ -333,14 +340,14 @@ function CallTaxi(taxi) {
     }
 }
 
-let ola = new CallTaxi("ola");
-let uber = new CallTaxi("uber");
-let zoomcar = new CallTaxi("zoomcar");
-let fastrack = new CallTaxi("fastrack");
-let maxicabs = new CallTaxi("maxicabs");
-let chennaicalltaxi = new CallTaxi("chennaicalltaxi");
+let ola = new CallTaxi({ name: "ola", cost: 7 });
+let uber = new CallTaxi({ name: "uber", cost: 8 });
+let zoomcar = new CallTaxi({ name: "zoomcar", cost: 10 });
+let fastrack = new CallTaxi({ name: "fastrack", cost: 9 });
+let maxicabs = new CallTaxi({ name: "maxicabs", cost: 5 });
+let chennaicabs = new CallTaxi({ name: "chennaicabs", cost: 6 });
 
-let taxiInstances = [ola, uber, zoomcar, fastrack, chennaicalltaxi, maxicabs];
+let taxiInstances = [ola, uber, zoomcar, fastrack, maxicabs, chennaicabs];
 
 
 $("#submitPickup").click(function() {

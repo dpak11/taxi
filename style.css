@@ -1,6 +1,7 @@
 td,th{
 		border: solid 1px #000;
-		width: 110px
+		width: 110px;
+		text-align: center;
 	}
 	td{
 		padding: 5px;
@@ -33,19 +34,24 @@ td,th{
 	.hidetaxi{
 		display:none
 	}
-	 #mapTable td {
+	.nameCaps, .cabnames{
+		text-transform: capitalize;
+	}
+	#mapTable{margin-top: 50px}
+	#mapTable td {
         width: 3px;
         height: 3px;
         border-radius: 50%;
         background-color: #fff;
 		border: none;
+		padding: 2px
     }
     #mapTable td.highlight{    	
     	border: solid 1px #9c9393;
     }
 
     .activepoints{
-    	background-color: rgb(245, 199, 221) !important;   	
+    	background-color: rgb(218, 172, 194) !important  	
 		
     }
     .mark-red{
