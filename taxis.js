@@ -157,7 +157,7 @@ const CallTaxiPool = {
 
 const DOMRoutePoints = {
     mapSeqPoints: {
-        point_a: "0_0,1_1,2_2,2_3,3_4,4_5,4_6,4_7,4_8,3_9,3_10",
+        point_a: "0_0,1_1,2_2,2_3,3_4,4_5,4_6,4_7,4_8,4_9,3_9,3_10",
         point_b: "3_11,3_12,2_13,2_14,2_15,2_16,2_17,3_18,4_19,5_20,5_21,5_22",
         point_c: "6_23,6_24,6_25,6_26,5_26,5_27,5_28,4_28,3_28,3_29",
         point_d: "3_30,3_31,2_31,1_32,1_33,2_34,3_35,4_36,5_37,5_38,5_39,5_40",
@@ -203,11 +203,31 @@ const DOMRoutePoints = {
         let perc = Math.round(((_totDist - distLeft) / _totDist) * 100);
         let taxiIndex = CallTaxiPool.taxiNameList.indexOf(name);
 
+        let refObj = {
+            dom: function(elm,method) {
+                CallTaxiPool.alltaxis.forEach(function(t) {
+                    if (t.id == name) {
+                    	if(method == "save"){
+                    		t.DOM_elm = elm;
+                    	}else if(t.DOM_elm){
+                    		$(t.DOM_elm).removeClass("mark-red");
+                    	}
+                        
+                    }
+                });
+            }
+        };
+
+        if(status.includes("picking")){
+        	refObj.dom(null,"get");
+        }
+
         let order = [];
         if (_apoint > _end) {
             for (let cnt = _apoint; cnt >= _end; cnt--) {
                 order.push(routesequence.substr(cnt, 1));
             }
+            order.splice(0, 1);
         } else {
             for (let cnt = _apoint; cnt < _end; cnt++) {
                 order.push(routesequence.substr(cnt, 1));
@@ -224,19 +244,27 @@ const DOMRoutePoints = {
             seqlist.push(...p);
         });
 
-        let progressPointTotalCells = Math.ceil((seqlist.length * perc) / 100);
+        let progressPointTotalCells = Math.floor((seqlist.length * perc) / 100);
 
         for (let seq in seqlist) {
             let domEl = `#map${taxiIndex}_cell${seqlist[seq]}`;
             if (status == "clear") {
-                $(domEl).removeClass("activepoints makered");
-            } else {
+                $(domEl).removeClass("activepoints mark-red");
+                if (seq == (seqlist.length - 1)) {
+                    $(domEl).addClass("mark-red");
+                    refObj.dom(domEl,"save");
+                }
+            }else if(status.includes("picking")){
+            	if(seq == 0){
+            		$(domEl).addClass("mark-red");
+            	}
+            }else {
                 if ($(domEl).hasClass("activepoints") === false) {
                     $(domEl).addClass("activepoints");
                 }
 
                 if (seq <= (progressPointTotalCells - 1)) {
-                    $(domEl).addClass("makered");
+                    $(domEl).addClass("mark-red");
                 }
             }
 

@@ -45,10 +45,10 @@ td,th{
     }
 
     .activepoints{
-    	background-color: rgb(73, 177, 216) !important;    	
+    	background-color: rgb(245, 199, 221) !important;   	
 		
     }
-    .makered{
+    .mark-red{
     	background-color: red !important;
     }
 
