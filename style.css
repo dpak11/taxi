@@ -1,78 +1,100 @@
-td,th{
-		border: solid 1px #000;
-		width: 110px;
-		text-align: center;
-	}
-	td{
-		padding: 5px;
-		border: none;
-		border-right: solid 1px #aba3a3;
-		border-bottom: solid 1px #aba3a3;
-	}
-	.blinker{
-		display:inline;
-		animation: blinking .5s infinite alternate;
-	}
-	#infoTaxis span {
-		display: inline-block;
-		width: 160px;
-		padding: 5px;
-		border:solid 2px #fff;
-		padding-right: 30px;		
-		background-color: #f3eaea;
-	}
-	body > p:nth-child(3){	
-		margin: 30px 0 0;
-		background-color: lightgray;
-		width: 596px;
-		text-align: center;
-		font-size: 1.2em;
-		letter-spacing: 2px;
-	}
-	#infoTaxis{margin:0	}
-	
-	.hidetaxi{
-		display:none
-	}
-	.nameCaps, .cabnames{
-		text-transform: capitalize;
-	}
-	#mapTable{margin-top: 50px}
-	#mapTable td {
-        width: 3px;
-        height: 3px;
-        border-radius: 50%;
-        background-color: #fff;
-		border: none;
-		padding: 2px
-    }
-    #mapTable td.highlight{    	
-    	border: solid 1px #9c9393;
+td,
+th {
+    border: solid 1px #000;
+    width: 110px;
+    text-align: center;
+}
+
+td {
+    padding: 5px;
+    border: none;
+    border-right: solid 1px #aba3a3;
+    border-bottom: solid 1px #aba3a3;
+}
+
+.blinker {
+    display: inline;
+    animation: blinking .5s infinite alternate;
+}
+
+#infoTaxis span {
+    display: inline-block;
+    width: 32%;
+    padding: 5px;
+    border: solid 2px #fff;
+    padding-right: 30px;
+    background-color: #f3eaea;
+}
+
+.info-title {
+    text-align: center;
+    margin-top: 30px;
+    font-weight: bold;
+}
+
+body>p:nth-child(3) {
+    margin: 30px 0 0;
+    background-color: lightgray;
+    width: 596px;
+    text-align: center;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
+
+#infoTaxis {
+    margin: 0
+}
+
+.hidetaxi {
+    display: none
+}
+
+.nameCaps,
+.cabnames {
+    text-transform: capitalize;
+}
+
+#mapTable {
+    margin-top: 50px;
+    border-collapse: separate;
+}
+
+#mapTable td {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: none;
+    padding: 3px
+}
+
+#mapTable td.highlight {
+    border: solid 1px #9c9393;
+}
+
+.activepoints {
+    background-color: rgb(218, 172, 194) !important
+}
+
+.mark-red {
+    background-color: red !important;
+}
+
+
+.cabnames {
+    background: rgb(241, 234, 234) !important;
+    font-size: 1.4em;
+    border-radius: 0 !important;
+}
+
+@keyframes blinking {
+    0% {
+        opacity: 0;
+        transform: translateX(0px);
     }
 
-    .activepoints{
-    	background-color: rgb(218, 172, 194) !important  	
-		
+    100% {
+        opacity: 1;
+        transform: translateX(10px);
     }
-    .mark-red{
-    	background-color: red !important;
-    }
-
-
-    .cabnames{
-    	background: rgb(241, 234, 234) !important;
-    	font-size: 1.4em;
-		border-radius: 0 !important;
-    }
-
-	@keyframes blinking{
-		0%{
-			opacity: 0;
-			transform: translateX(0px);
-		}
-		100%{
-			opacity: 1;
-			transform: translateX(10px);
-		}
-	}
-	
+}

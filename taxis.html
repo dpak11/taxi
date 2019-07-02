@@ -1,97 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Taxis</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 </head>
 
 <body>
-    <table style="background: rgb(226, 229, 233)" >
-        <thead>
-            <th>&nbsp;</th>
-            <th>A</th>
-            <th>B</th>
-            <th>C</th>
-            <th>D</th>
-            <th>E</th>
-            <th>F</th>
-            <th>G</th>
-            <th>H</th>
-            <th>I</th>
-            <th>J</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>PICK UP</td>
-                <td id="col-point-a"></td>
-                <td id="col-point-b"></td>
-                <td id="col-point-c"></td>
-                <td id="col-point-d"></td>
-                <td id="col-point-e"></td>
-                <td id="col-point-f"></td>
-                <td id="col-point-g"></td>
-                <td id="col-point-h"></td>
-                <td id="col-point-i"></td>
-                <td id="col-point-j"></td>
-            </tr>
-            <tr>
-                <td>DROP</td>
-                <td id="col-halt-a"></td>
-                <td id="col-halt-b"></td>
-                <td id="col-halt-c"></td>
-                <td id="col-halt-d"></td>
-                <td id="col-halt-e"></td>
-                <td id="col-halt-f"></td>
-                <td id="col-halt-g"></td>
-                <td id="col-halt-h"></td>
-                <td id="col-halt-i"></td>
-                <td id="col-halt-j"></td>
-            </tr>
-        </tbody>
-    </table>
-    <p>
-        <span>Pick me up from </span><select id="pickupSel" name="pickupSel">
-            <option value="a">Point - A</option>
-            <option value="b">Point - B</option>
-            <option value="c">Point - C</option>
-            <option value="d">Point - D</option>
-            <option value="e">Point - E</option>
-            <option value="f">Point - F</option>
-            <option value="g">Point - G</option>
-            <option value="h">Point - H</option>
-            <option value="i">Point - I</option>
-            <option value="j">Point - J</option>
-        </select> <span>and drop me at </span>
-        <select id="dropSel" name="dropSel">
-            <option value="a">Point - A</option>
-            <option value="b">Point - B</option>
-            <option value="c">Point - C</option>
-            <option value="d">Point - D</option>
-            <option value="e">Point - E</option>
-            <option value="f">Point - F</option>
-            <option value="g">Point - G</option>
-            <option value="h">Point - H</option>
-            <option value="i">Point - I</option>
-            <option value="j">Point - J</option>
-        </select>
-        <select id="cab_name" name="cab_name">
-            <option value="none" selected>Any Nearest Taxi</option>
-        </select>
-        <input type="button" id="submitPickup" value="Submit" /><span id="searchlog"></span>
-        <!--<input type="text" id="cab_name" placeholder="Search Only for ..." />-->
-    </p>
-    <p>All Taxis Status</p>
-    <p id="infoTaxis">
-    </p>
-    <table id="mapTable">
-        <tbody>
-        </tbody>
-    </table>
+    <div class="container">
+        <div class="row">
+            <p class="col-6">
+                <span>Pick me up from </span><select id="pickupSel" name="pickupSel">
+                    <option value="a">Point - A</option>
+                    <option value="b">Point - B</option>
+                    <option value="c">Point - C</option>
+                    <option value="d">Point - D</option>
+                    <option value="e">Point - E</option>
+                    <option value="f">Point - F</option>
+                    <option value="g">Point - G</option>
+                    <option value="h">Point - H</option>
+                    <option value="i">Point - I</option>
+                    <option value="j">Point - J</option>
+                </select> <span>and drop me at </span>
+                <select id="dropSel" name="dropSel">
+                    <option value="a">Point - A</option>
+                    <option value="b" selected>Point - B</option>
+                    <option value="c">Point - C</option>
+                    <option value="d">Point - D</option>
+                    <option value="e">Point - E</option>
+                    <option value="f">Point - F</option>
+                    <option value="g">Point - G</option>
+                    <option value="h">Point - H</option>
+                    <option value="i">Point - I</option>
+                    <option value="j">Point - J</option>
+                </select>
+            </p>
+            <p class="col-6" style="text-align: right">
+                <select id="cab_name" name="cab_name">
+                    <option value="none" selected>Any Nearest Taxi</option>
+                </select>
+                <input type="button" id="submitPickup" value="Submit" /><span id="searchlog"></span>
+                <!--<input type="text" id="cab_name" placeholder="Search Only for ..." />-->
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table style="background: rgb(226, 229, 233)">
+                    <thead>
+                        <th>&nbsp;</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                        <th>F</th>
+                        <th>G</th>
+                        <th>H</th>
+                        <th>I</th>
+                        <th>J</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PICK UP</td>
+                            <td id="col-point-a"></td>
+                            <td id="col-point-b"></td>
+                            <td id="col-point-c"></td>
+                            <td id="col-point-d"></td>
+                            <td id="col-point-e"></td>
+                            <td id="col-point-f"></td>
+                            <td id="col-point-g"></td>
+                            <td id="col-point-h"></td>
+                            <td id="col-point-i"></td>
+                            <td id="col-point-j"></td>
+                        </tr>
+                        <tr>
+                            <td>DROP</td>
+                            <td id="col-halt-a"></td>
+                            <td id="col-halt-b"></td>
+                            <td id="col-halt-c"></td>
+                            <td id="col-halt-d"></td>
+                            <td id="col-halt-e"></td>
+                            <td id="col-halt-f"></td>
+                            <td id="col-halt-g"></td>
+                            <td id="col-halt-h"></td>
+                            <td id="col-halt-i"></td>
+                            <td id="col-halt-j"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-12 info-title">All Taxis Status</div>
+                    <div class="col-12" id="infoTaxis"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <table id="mapTable">
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <script src="taxis.js"></script>
-    
 </body>
 
 </html>

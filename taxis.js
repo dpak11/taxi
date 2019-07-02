@@ -136,7 +136,7 @@ const CallTaxiPool = {
             let activetxt1 = "";
             let activetxt2 = "";
             if (this.alltaxis[disp].status == "ready") {
-                activetxt1 = "<span class='' style = 'color:#000;font-weight:bold'>";
+                activetxt1 = "<span class='' style = 'color:green;font-weight:normal'>";
             } else if (this.alltaxis[disp].status == "running") {
                 activetxt1 = "<span class='blinker' style = 'color:grey;font-weight:normal'>";
             } else {
@@ -159,17 +159,17 @@ const DOMRoutePoints = {
     getJsonVals: function() {
         return fetch('mpoints.json')
             .then(response => response.json())
-            .then(json => json.points[Math.floor(Math.random()*json.points.length)]);            
+            .then(json => json.points[Math.floor(Math.random() * json.points.length)]);
     },
     mapSeqPoints: {},
     init: function() {
-        this.getJsonVals().then(jpoints=> {
-        	this.mapSeqPoints = jpoints;
+        this.getJsonVals().then(jpoints => {
+            this.mapSeqPoints = jpoints;
             let mapBasePoints = [];
-            for(let px in this.mapSeqPoints){
-            	mapBasePoints.push(...this.mapSeqPoints[px].split(","));
+            for (let px in this.mapSeqPoints) {
+                mapBasePoints.push(...this.mapSeqPoints[px].split(","));
             }
-            
+
             for (let z = 0; z < 6; z++) {
                 $("#mapTable tbody").append(`<tr><td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`);
                 for (let i = 0; i < 10; i++) {
@@ -273,8 +273,10 @@ const DOMRoutePoints = {
 };
 
 function pageAutoScroll() {
-    $('html,body').animate({
-        scrollTop: $("#subtab5").offset().top
+    setTimeout(function() {
+        $('html,body').animate({
+            scrollTop: $("#subtab5").offset().top
+        }, 3000);
     }, 2000);
 }
 
@@ -326,8 +328,8 @@ function CallTaxi(taxi) {
                                 CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
                                 DOMRoutePoints.update(id, "running", startPoint, destination, distLeft);
                             }
-                        }, 10000);
-                    }, 10000);
+                        }, 5000);
+                    }, 5000);
                     return true;
                 } else {
                     return false;
