@@ -156,44 +156,43 @@ const CallTaxiPool = {
 };
 
 const DOMRoutePoints = {
-    mapSeqPoints: {
-        point_a: "0_0,1_1,2_2,2_3,3_4,4_5,4_6,4_7,4_8,4_9,3_9,3_10",
-        point_b: "3_11,3_12,2_13,2_14,2_15,2_16,2_17,3_18,4_19,5_20,5_21,5_22",
-        point_c: "6_23,6_24,6_25,6_26,5_26,5_27,5_28,4_28,3_28,3_29",
-        point_d: "3_30,3_31,2_31,1_32,1_33,2_34,3_35,4_36,5_37,5_38,5_39,5_40",
-        point_e: "6_41,7_42,8_43,8_44,8_45,8_46,8_47,8_48,8_49,8_50,8_51,7_52,6_52",
-        point_f: "5_52,4_53,3_54,3_55,4_56,5_55,6_55,7_55,8_56,7_57",
-        point_g: "6_58,6_59,7_60,7_61,7_62,6_63,5_64,5_65,5_66,6_67,6_68",
-        point_h: "6_69,7_70,8_70,9_71,8_72,7_72,6_72,5_72,4_71,3_70,2_70",
-        point_i: "1_71,1_72,1_73,2_74,3_75,4_75,5_76,6_77,7_78,8_79,8_80,8_81,8_82,7_83",
-        point_j: "6_84,5_85,4_86,3_87,2_88,1_89,1_90,1_91,0_92,0_93,1_94,2_95,3_96,4_97,5_98,5_99"
+    getJsonVals: function() {
+        return fetch('mpoints.json')
+            .then(response => response.json())
+            .then(json => json.points[Math.floor(Math.random()*json.points.length)]);            
     },
-
+    mapSeqPoints: {},
     init: function() {
-        let mapPlotStr = "0_0,1_1,1_32,1_33,1_71,1_72,1_73,2_2,2_3,2_13,2_14,2_15,2_16,2_17,2_31,2_34,2_70,2_74,3_4,3_9,3_10,3_11,3_12,3_18,3_28,3_29,3_30,3_31,3_35,3_54,3_55,3_70,3_75,4_5,4_6,4_7,4_8,4_9,4_19,4_28,4_36,4_53,4_56,4_71,4_75,5_20,5_21,5_22,5_26,5_27,5_28,5_37,5_38,5_39,5_40,5_52,5_55,5_64,5_65,5_66,5_72,5_76,6_23,6_24,6_25,6_26,6_41,6_52,6_55,6_58,6_59,6_63,6_67,6_68,6_69,6_72,6_77,7_42,7_52,7_55,7_57,7_60,7_61,7_62,7_70,7_72,7_78,7_83,8_43,8_44,8_45,8_46,8_47,8_48,8_49,8_50,8_51,8_56,8_70,8_72,8_79,8_80,8_81,8_82,9_71";
-
-        for (let z = 0; z < 6; z++) {
-            $("#mapTable tbody").append(`<tr><td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`);
-            for (let i = 0; i < 10; i++) {
-                let row = `<tr class="map${z}_row${i}">`;
-                for (let j = 0; j < 100; j++) {
-                    row = `${row}
-                <td id="map${z}_cell${i}_${j}"></td>`;
+        this.getJsonVals().then(jpoints=> {
+        	this.mapSeqPoints = jpoints;
+            let mapBasePoints = [];
+            for(let px in this.mapSeqPoints){
+            	mapBasePoints.push(...this.mapSeqPoints[px].split(","));
+            }
+            
+            for (let z = 0; z < 6; z++) {
+                $("#mapTable tbody").append(`<tr><td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`);
+                for (let i = 0; i < 10; i++) {
+                    let row = `<tr class="map${z}_row${i}">`;
+                    for (let j = 0; j < 100; j++) {
+                        row = `${row}
+	                <td id="map${z}_cell${i}_${j}"></td>`;
+                    }
+                    row = `${row}</tr>`;
+                    $("#mapTable tbody").append(row);
                 }
-                row = `${row}</tr>`;
-                $("#mapTable tbody").append(row);
+
             }
 
-        }
+            let taxiLen = CallTaxiPool.taxiNameList.length;
+            mapBasePoints.forEach(function(e) {
+                for (let m = 0; m < taxiLen; m++) {
+                    $(`#map${m}_cell${e}`).addClass("highlight");
+                }
 
-        let mapBasePoints = mapPlotStr.split(",");
-        let taxiLen = CallTaxiPool.taxiNameList.length;
-        mapBasePoints.forEach(function(e) {
-            for (let m = 0; m < taxiLen; m++) {
-                $(`#map${m}_cell${e}`).addClass("highlight");
-            }
-
+            });
         });
+
     },
     update: function(name, status, start, end, distLeft) {
         let routesequence = "abcdefghij";
@@ -273,10 +272,10 @@ const DOMRoutePoints = {
     }
 };
 
-function pageAutoScroll() {    
+function pageAutoScroll() {
     $('html,body').animate({
-            scrollTop: $("#subtab5").offset().top
-        }, 2000);
+        scrollTop: $("#subtab5").offset().top
+    }, 2000);
 }
 
 
@@ -308,8 +307,8 @@ function CallTaxi(taxi) {
                     totalFare += nearestTaxi.distance * baseFare;
                     CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
                     CallTaxiPool.displayStatus();
-                    DOMRoutePoints.update(id, status, startPoint, destination, distLeft);                    
-                    pageAutoScroll();                    
+                    DOMRoutePoints.update(id, status, startPoint, destination, distLeft);
+                    pageAutoScroll();
                     setTimeout(function() {
                         status = "running";
                         CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
@@ -365,3 +364,10 @@ DOMRoutePoints.init();
 setInterval(function() {
     CallTaxiPool.getSummary();
 }, 5000);
+
+/*let consoleList = [];
+$("#mapTable tbody").on("click","td", function(){
+	consoleList.push($(this).attr("id").split("_cell")[1]);
+	$(this).css("background","black");
+	console.log(consoleList.join(","))
+})*/
