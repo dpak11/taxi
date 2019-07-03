@@ -190,7 +190,15 @@ const DOMRoutePoints = {
                 }
 
             });
-        });
+        }).catch((err) => {
+            console.log(err);
+            if(window.location.href.indexOf("http") == 0){
+                alert("JSON file missing.");
+            }else{
+                alert("URL scheme must be 'http' or 'https' for CORS request. Try running from a Node server.")
+            }
+            
+        })
 
     },
     update: function(name, status, start, end, distLeft) {
