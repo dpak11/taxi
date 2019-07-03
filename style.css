@@ -12,18 +12,28 @@ td {
     border-bottom: solid 1px #aba3a3;
 }
 
+.container {
+    margin-top: 10px
+}
+#submitPickup{
+    padding: 1px 8px;
+}
+
 .blinker {
-    display: inline;
+    display: inline;    
     animation: blinking .5s infinite alternate;
+}
+.red-blinker{
+    animation: blinkingred .5s infinite alternate;
 }
 
 #infoTaxis span {
     display: inline-block;
     width: 32%;
     padding: 5px;
-    border: solid 2px #fff;
+    border-top: solid 2px rgb(213, 187, 187);
     padding-right: 30px;
-    background-color: #f3eaea;
+   /*  background-color: #f3eaea; */
 }
 
 .info-title {
@@ -82,9 +92,13 @@ body>p:nth-child(3) {
 
 
 .cabnames {
-    background: rgb(241, 234, 234) !important;
+    background: rgb(232, 214, 214) !important;
     font-size: 1.4em;
     border-radius: 0 !important;
+}
+select{
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.52);
+    background-color: rgb(202, 215, 228);
 }
 
 @keyframes blinking {
@@ -96,5 +110,17 @@ body>p:nth-child(3) {
     100% {
         opacity: 1;
         transform: translateX(10px);
+    }
+}
+
+@keyframes blinkingred {
+    0% {
+        opacity: .5;
+        transform: scale(.3)
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1)
     }
 }

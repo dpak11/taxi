@@ -157,8 +157,7 @@ const CallTaxiPool = {
 
 const DOMRoutePoints = {
     getJsonVals: function() {
-        return fetch('mpoints.json')
-            .then(response => response.json())
+        return fetch("mpoints.json").then(response => response.json())
             .then(json => json.points[Math.floor(Math.random() * json.points.length)]);
     },
     mapSeqPoints: {},
@@ -176,7 +175,7 @@ const DOMRoutePoints = {
                     let row = `<tr class="map${z}_row${i}">`;
                     for (let j = 0; j < 100; j++) {
                         row = `${row}
-	                <td id="map${z}_cell${i}_${j}"></td>`;
+                    <td id="map${z}_cell${i}_${j}"></td>`;
                     }
                     row = `${row}</tr>`;
                     $("#mapTable tbody").append(row);
@@ -253,9 +252,13 @@ const DOMRoutePoints = {
                     $(domEl).addClass("mark-red");
                     refObj.dom(domEl, "save");
                 }
+                if (seq == (seqlist.length - 2)) {
+                    $(domEl).removeClass("red-blinker");
+                }
             } else if (status.includes("picking")) {
                 if (seq == 0) {
                     $(domEl).addClass("mark-red");
+                    $(domEl).addClass("red-blinker");
                 }
             } else {
                 if ($(domEl).hasClass("activepoints") === false) {
@@ -265,6 +268,12 @@ const DOMRoutePoints = {
                 if (seq <= (progressPointTotalCells - 1)) {
                     $(domEl).addClass("mark-red");
                 }
+                if (seq < (progressPointTotalCells - 1)) {
+                    $(domEl).removeClass("red-blinker");
+                }
+                if (seq == (progressPointTotalCells - 1)) {
+                    $(domEl).addClass("red-blinker");
+                }
             }
 
         }
@@ -272,10 +281,11 @@ const DOMRoutePoints = {
     }
 };
 
-function pageAutoScroll() {
+function pageAutoScroll(id) {
+    let subtab = "#subtab" + CallTaxiPool.taxiNameList.indexOf(id);
     setTimeout(function() {
         $('html,body').animate({
-            scrollTop: $("#subtab5").offset().top
+            scrollTop: $(subtab).offset().top - 150
         }, 3000);
     }, 2000);
 }
@@ -310,7 +320,7 @@ function CallTaxi(taxi) {
                     CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
                     CallTaxiPool.displayStatus();
                     DOMRoutePoints.update(id, status, startPoint, destination, distLeft);
-                    pageAutoScroll();
+                    pageAutoScroll(id);
                     setTimeout(function() {
                         status = "running";
                         CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
@@ -369,7 +379,7 @@ setInterval(function() {
 
 /*let consoleList = [];
 $("#mapTable tbody").on("click","td", function(){
-	consoleList.push($(this).attr("id").split("_cell")[1]);
-	$(this).css("background","black");
-	console.log(consoleList.join(","))
+    consoleList.push($(this).attr("id").split("_cell")[1]);
+    $(this).css("background","black");
+    console.log(consoleList.join(","))
 })*/
