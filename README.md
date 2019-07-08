@@ -6,7 +6,14 @@
 
 2) Go to public folder and run "taxis.html".
 
-In case you are seeing a CORS Alert message, it means that your browser will only allow 'http:','https:' requests from your local. So now you will need to run it in a Node environment, or Alternatively you can also try a different browser. (Firefox worked for me)
+In case you are seeing a CORS Alert message, it means that your browser will only allow 'http:','https:' requests from your local. Now you will have to try any one of the below:
+
+- Run it in a Node environment, or a web sever to make "http" requests. (You may use "app.js" if you are running Node server).
+
+- Try a different browser. (Firefox might work).
+
+- Copy the JSON data from "mpoints.json" and store it in an object variable (inside taxis.js). Remove the fetch api call to "mpoints.json"
+
 
 # Running in Node:
 
