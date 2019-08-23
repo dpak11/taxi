@@ -1,4 +1,5 @@
-## Search through a list of callTaxis that are in "ready" status(ie., not running) and automatically allocate the nearest one to the Pick Up location. You may also manually pick a callTaxi of your choice from the list.
+## Search through a list of taxis that are in "ready" status(ie., not running) and automatically allocate the nearest one to the Pick Up location. You may also manually pick a callTaxi of your choice from the list.
+(Note: There are No maps used. The routes are generated from the DOM elements that are represented as dotted paths)
 
 # To see the output:
 
