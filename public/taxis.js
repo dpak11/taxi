@@ -40,29 +40,22 @@ const CallTaxiPool = {
         }
 
 
-        myTaxiClone = myTaxiClone.filter(function(elem, indx) {
-            return elem.status == "ready";
-        });
+        myTaxiClone = myTaxiClone.filter((elem, indx) => elem.status == "ready");
 
-
-        for (let alls in myTaxiClone) {
+        myTaxiClone.forEach(taxiclone => {
             let _end = routesequence.indexOf(end);
-            let _curr = routesequence.indexOf(myTaxiClone[alls].currentLoc);
-            myTaxiClone[alls].distance = 50 * Math.abs(_apoint - _end);
-            myTaxiClone[alls].pickDist = Math.abs(_apoint - _curr);
-        }
-
-        myTaxiClone.sort(function(a, b) {
-            return a.pickDist - b.pickDist;
+            let _curr = routesequence.indexOf(taxiclone.currentLoc);
+            taxiclone.distance = 50 * Math.abs(_apoint - _end);
+            taxiclone.pickDist = Math.abs(_apoint - _curr);
         });
+
+        myTaxiClone.sort((a, b) => a.pickDist - b.pickDist);
 
         if (myTaxiClone.length == 1) {
             return myTaxiClone[0];
         }
 
-        myTaxiClone = myTaxiClone.filter(function(elem, indx) {
-            return elem.pickDist === myTaxiClone[0].pickDist;
-        });
+        myTaxiClone = myTaxiClone.filter(elem => elem.pickDist === myTaxiClone[0].pickDist);
 
         for (let fx in myTaxiClone) {
             if (myTaxiClone[fx].id == txid) {
@@ -115,12 +108,10 @@ const CallTaxiPool = {
         }
     },
     getSummary: function() {
-        let txi = this.alltaxis;
         let summary = "";
-        for (let i = 0; i < txi.length; i++) {
-            summary += `<span class="nameCaps">${txi[i].id} (Rs.${txi[i].price}/Km)</span><span> Remaining: ${txi[i].distance} Kms </span><span> Total(All trips): Rs.${txi[i].total}</span><br/>`;
-
-        }
+        this.alltaxis.forEach(taxi => {
+            summary += `<span class="nameCaps">${taxi.id} (Rs.${taxi.price}/Km)</span><span> Remaining: ${taxi.distance} Kms </span><span> Total(All trips): Rs.${taxi.total}</span><br/>`;
+        });
         $("#infoTaxis").html(summary);
     },
     displayStatus: function() {
@@ -130,28 +121,27 @@ const CallTaxiPool = {
             document.getElementById("col-halt-" + alph.substr(i, 1)).innerHTML = "";
         }
 
-        for (let disp in this.alltaxis) {
-            let cell1 = document.getElementById("col-point-" + this.alltaxis[disp].currentLoc);
-            let cell2 = document.getElementById("col-halt-" + this.alltaxis[disp].destination);
+        this.alltaxis.forEach(txi => {
+            let cell1 = document.getElementById("col-point-" + txi.currentLoc);
+            let cell2 = document.getElementById("col-halt-" + txi.destination);
             let activetxt1 = "";
             let activetxt2 = "";
-            if (this.alltaxis[disp].status == "ready") {
+            if (txi.status == "ready") {
                 activetxt1 = "<span class='' style = 'color:green;font-weight:normal'>";
-            } else if (this.alltaxis[disp].status == "running") {
+            } else if (txi.status == "running") {
                 activetxt1 = "<span class='blinker' style = 'color:grey;font-weight:normal'>";
             } else {
                 activetxt1 = "<span class='' style = 'color:grey;font-weight:normal'>";
             }
-            cell1.innerHTML = `${cell1.innerHTML} ${activetxt1} ${this.alltaxis[disp].id} (${this.alltaxis[disp].status})</span><br/><br/>`;
+            cell1.innerHTML = `${cell1.innerHTML} ${activetxt1} ${txi.id} (${txi.status})</span><br/><br/>`;
 
-            if (this.alltaxis[disp].status == "running") {
-                activetxt2 = `<span class='blinker ${this.alltaxis[disp].id}'>`;
+            if (txi.status == "running") {
+                activetxt2 = `<span class='blinker ${txi.id}'>`;
             } else {
                 activetxt2 = "<span class='hidetaxi'>";
             }
-            cell2.innerHTML = `${cell2.innerHTML} ${activetxt2} ${this.alltaxis[disp].id} </span><br/><br/>`;
-
-        }
+            cell2.innerHTML = `${cell2.innerHTML} ${activetxt2} ${txi.id} </span><br/><br/>`;
+        });
     }
 };
 
@@ -192,12 +182,12 @@ const DOMRoutePoints = {
             });
         }).catch((err) => {
             console.log(err);
-            if(window.location.href.indexOf("http") == 0){
+            if (window.location.href.indexOf("http") == 0) {
                 alert("JSON file missing or invalid");
-            }else{
+            } else {
                 alert("URL scheme must be 'http' or 'https' for CORS request. Try running from a Node server.")
             }
-            
+
         })
 
     },
@@ -211,7 +201,7 @@ const DOMRoutePoints = {
 
         let refObj = {
             dom: function(elm, method) {
-                CallTaxiPool.alltaxis.forEach(function(t) {
+                CallTaxiPool.alltaxis.forEach(t => {
                     if (t.id == name) {
                         if (method == "save") {
                             t.DOM_elm = elm;
