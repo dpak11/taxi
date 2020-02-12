@@ -1,3 +1,16 @@
+
+
+const submitPickupBtn = document.getElementById("submitPickup");
+submitPickupBtn.addEventListener("click", () => {
+    let pick = document.getElementById("pickupSel").value;
+    let drop = document.getElementById("dropSel").value;
+    if (pick != drop) {
+        submitPickupBtn.setAttribute("disabled", "disabled");
+        CallTaxiPool.lookup.cabsnum = CallTaxiPool.alltaxis.length - 1;
+        CallTaxiPool.lookup.search("xxx", pick, drop);
+    } 
+});
+
 const CallTaxiPool = {
     alltaxis: [],
     taxiNameList: [],
@@ -12,14 +25,15 @@ const CallTaxiPool = {
         this.alltaxis.push(_obj);
         this.displayStatus(taxi.name, "ready", "", "a", "a", 0);
         this.taxiNameList.push(taxi.name);
-        $("#cab_name").append(`<option value='${taxi.name}'>${taxi.name}</option>`);
+        let option = document.createElement("option");
+        option.value = taxi.name;
+        option.text = taxi.name;
+        document.getElementById("cab_name").appendChild(option);
         return _obj;
     },
     nearest: function(pick, end, txid, strictlyTaxi) {
         let routesequence = "abcdefghij";
         let _apoint = routesequence.indexOf(pick);
-
-        //var readyNearTaxis = [];
         let myTaxiClone = JSON.parse(JSON.stringify(CallTaxiPool.alltaxis));
 
         for (let j in myTaxiClone) {
@@ -39,9 +53,7 @@ const CallTaxiPool = {
             return false;
         }
 
-
-        myTaxiClone = myTaxiClone.filter((elem, indx) => elem.status == "ready");
-
+        myTaxiClone = myTaxiClone.filter((elem) => elem.status == "ready");
         myTaxiClone.forEach(taxiclone => {
             let _end = routesequence.indexOf(end);
             let _curr = routesequence.indexOf(taxiclone.currentLoc);
@@ -86,24 +98,24 @@ const CallTaxiPool = {
         cabsnum: 0,
         search: function(n, p, d) {
             if (CallTaxiPool.lookup.cabsnum > 0) {
-                setTimeout(function() {
-                    $("#searchlog").text("Searching...");
-                    let mycab = $("#cab_name").val();
+                setTimeout(() => {
+                    document.getElementById("searchlog").innerText="Searching...";
+                    let mycab = document.getElementById("cab_name").value;
                     let strictSearch = mycab == "none" ? "" : mycab;
                     if (strictSearch != "" && CallTaxiPool.taxiNameList.indexOf(mycab) == -1) {
-                        $("#searchlog").text("Not Found");
-                        $("#submitPickup").prop("disabled", false);
+                        document.getElementById("searchlog").innerText="Not Found";
+                        submitPickupBtn.removeAttribute("disabled");
                     } else if (!taxiInstances[CallTaxiPool.lookup.cabsnum].pickme(n, p, d, strictSearch)) {
                         CallTaxiPool.lookup.search(n, p, d);
                         CallTaxiPool.lookup.cabsnum--;
                     } else {
-                        $("#searchlog").text("");
-                        $("#submitPickup").prop("disabled", false);
+                        document.getElementById("searchlog").innerText ="";
+                        submitPickupBtn.removeAttribute("disabled");
                     }
                 }, 1000);
             } else {
-                $("#searchlog").text("Not available");
-                $("#submitPickup").prop("disabled", false);
+                document.getElementById("searchlog").innerText="Not available";
+                submitPickupBtn.removeAttribute("disabled");
             }
         }
     },
@@ -112,7 +124,7 @@ const CallTaxiPool = {
         this.alltaxis.forEach(taxi => {
             summary += `<span class="nameCaps">${taxi.id} (Rs.${taxi.price}/Km)</span><span> Remaining: ${taxi.distance} Kms </span><span> Total(All trips): Rs.${taxi.total}</span><br/>`;
         });
-        $("#infoTaxis").html(summary);
+        document.getElementById("infoTaxis").innerHTML = summary;
     },
     displayStatus: function() {
         let alph = "abcdefghij";
@@ -160,25 +172,28 @@ const DOMRoutePoints = {
             }
 
             for (let z = 0; z < 6; z++) {
-                $("#mapTable tbody").append(`<tr><td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`);
+                let tableRow = document.createElement("tr");
+                tableRow.innerHTML = `<td colspan="90" class="cabnames" id="subtab${z}">${CallTaxiPool.taxiNameList[z]}</td>`;
+                document.querySelector("#mapTable tbody").appendChild(tableRow);
                 for (let i = 0; i < 10; i++) {
-                    let row = `<tr class="map${z}_row${i}">`;
+                    let row = document.createElement("tr");
+                    row.setAttribute("class",`map${z}_row${i}`);
                     for (let j = 0; j < 100; j++) {
-                        row = `${row}
-                    <td id="map${z}_cell${i}_${j}"></td>`;
+                        let td = document.createElement("td");
+                        td.setAttribute("id",`map${z}_cell${i}_${j}`);
+                        row.appendChild(td);
                     }
-                    row = `${row}</tr>`;
-                    $("#mapTable tbody").append(row);
+                    document.querySelector("#mapTable tbody").appendChild(row);
                 }
 
             }
 
             let taxiLen = CallTaxiPool.taxiNameList.length;
-            mapBasePoints.forEach(function(e) {
+            mapBasePoints.forEach((el) => {
                 for (let m = 0; m < taxiLen; m++) {
-                    $(`#map${m}_cell${e}`).addClass("highlight");
+                    let query = `#map${m}_cell${el}`;
+                    document.querySelector(query).classList.add("highlight");
                 }
-
             });
         }).catch((err) => {
             console.log(err);
@@ -206,7 +221,7 @@ const DOMRoutePoints = {
                         if (method == "save") {
                             t.DOM_elm = elm;
                         } else if (t.DOM_elm) {
-                            $(t.DOM_elm).removeClass("mark-red");
+                            document.querySelector(t.DOM_elm).classList.remove("mark-red");
                         }
 
                     }
@@ -232,7 +247,7 @@ const DOMRoutePoints = {
 
 
         let seqlist = [];
-        order.forEach(function(s) {
+        order.forEach((s) => {
             let p = DOMRoutePoints.mapSeqPoints["point_" + s].split(",");
             if (_apoint > _end) {
                 p.reverse();
@@ -245,32 +260,32 @@ const DOMRoutePoints = {
         for (let seq in seqlist) {
             let domEl = `#map${taxiIndex}_cell${seqlist[seq]}`;
             if (status == "clear") {
-                $(domEl).removeClass("activepoints mark-red");
+                document.querySelector(domEl).classList.remove("activepoints","mark-red");
                 if (seq == (seqlist.length - 1)) {
-                    $(domEl).addClass("mark-red");
+                    document.querySelector(domEl).classList.add("mark-red");
                     refObj.dom(domEl, "save");
                 }
                 if (seq == (seqlist.length - 2)) {
-                    $(domEl).removeClass("red-blinker");
+                    document.querySelector(domEl).classList.remove("red-blinker");
                 }
             } else if (status.includes("picking")) {
                 if (seq == 0) {
-                    $(domEl).addClass("mark-red");
-                    $(domEl).addClass("red-blinker");
+                    document.querySelector(domEl).classList.add("mark-red");
+                    document.querySelector(domEl).classList.add("red-blinker");
                 }
             } else {
-                if ($(domEl).hasClass("activepoints") === false) {
-                    $(domEl).addClass("activepoints");
+                if (document.querySelector(domEl).classList.contains("activepoints") === false) {
+                    document.querySelector(domEl).classList.add("activepoints");
                 }
 
                 if (seq <= (progressPointTotalCells - 1)) {
-                    $(domEl).addClass("mark-red");
+                    document.querySelector(domEl).classList.add("mark-red");
                 }
                 if (seq < (progressPointTotalCells - 1)) {
-                    $(domEl).removeClass("red-blinker");
+                    document.querySelector(domEl).classList.remove("red-blinker");
                 }
                 if (seq == (progressPointTotalCells - 1)) {
-                    $(domEl).addClass("red-blinker");
+                    document.querySelector(domEl).classList.add("red-blinker");
                 }
             }
 
@@ -281,7 +296,7 @@ const DOMRoutePoints = {
 
 function pageAutoScroll(id) {
     let subtab = "#subtab" + CallTaxiPool.taxiNameList.indexOf(id);
-    setTimeout(function() {
+    setTimeout(() => {
         $('html,body').animate({
             scrollTop: $(subtab).offset().top - 150
         }, 3000);
@@ -358,20 +373,9 @@ let chennaicabs = new CallTaxi({ name: "chennaicabs", cost: 6 });
 
 let taxiInstances = [ola, uber, zoomcar, fastrack, maxicabs, chennaicabs];
 
-
-$("#submitPickup").click(function() {
-    let pick = $("#pickupSel").val();
-    let drop = $("#dropSel").val();
-    if (pick != drop) {
-        $("#submitPickup").prop("disabled", true);
-        CallTaxiPool.lookup.cabsnum = CallTaxiPool.alltaxis.length - 1;
-        CallTaxiPool.lookup.search("xxx", pick, drop);
-    }
-
-});
 DOMRoutePoints.init();
 
-setInterval(function() {
+setInterval(() => {
     CallTaxiPool.getSummary();
 }, 5000);
 
