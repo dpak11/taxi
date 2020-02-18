@@ -1,5 +1,3 @@
-
-
 const submitPickupBtn = document.getElementById("submitPickup");
 submitPickupBtn.addEventListener("click", () => {
     let pick = document.getElementById("pickupSel").value;
@@ -8,7 +6,7 @@ submitPickupBtn.addEventListener("click", () => {
         submitPickupBtn.setAttribute("disabled", "disabled");
         CallTaxiPool.lookup.cabsnum = CallTaxiPool.alltaxis.length - 1;
         CallTaxiPool.lookup.search("xxx", pick, drop);
-    } 
+    }
 });
 
 const CallTaxiPool = {
@@ -39,10 +37,7 @@ const CallTaxiPool = {
         for (let j in myTaxiClone) {
             if (myTaxiClone[j].status == "ready") {
                 let _end = routesequence.indexOf(end);
-                if (txid == myTaxiClone[j].id && strictlyTaxi == txid) {
-                    myTaxiClone[j].distance = 50 * Math.abs(_apoint - _end);
-                    return myTaxiClone[j];
-                } else if (strictlyTaxi == "" && myTaxiClone[j].currentLoc == pick && txid == myTaxiClone[j].id) {
+                if ((txid == myTaxiClone[j].id && strictlyTaxi == txid) || (strictlyTaxi == "" && myTaxiClone[j].currentLoc == pick && txid == myTaxiClone[j].id)) {
                     myTaxiClone[j].distance = 50 * Math.abs(_apoint - _end);
                     return myTaxiClone[j];
                 }
@@ -99,22 +94,22 @@ const CallTaxiPool = {
         search: function(n, p, d) {
             if (CallTaxiPool.lookup.cabsnum > 0) {
                 setTimeout(() => {
-                    document.getElementById("searchlog").innerText="Searching...";
+                    document.getElementById("searchlog").innerText = "Searching...";
                     let mycab = document.getElementById("cab_name").value;
                     let strictSearch = mycab == "none" ? "" : mycab;
                     if (strictSearch != "" && CallTaxiPool.taxiNameList.indexOf(mycab) == -1) {
-                        document.getElementById("searchlog").innerText="Not Found";
+                        document.getElementById("searchlog").innerText = "Not Found";
                         submitPickupBtn.removeAttribute("disabled");
                     } else if (!taxiInstances[CallTaxiPool.lookup.cabsnum].pickme(n, p, d, strictSearch)) {
                         CallTaxiPool.lookup.search(n, p, d);
                         CallTaxiPool.lookup.cabsnum--;
                     } else {
-                        document.getElementById("searchlog").innerText ="";
+                        document.getElementById("searchlog").innerText = "";
                         submitPickupBtn.removeAttribute("disabled");
                     }
                 }, 1000);
             } else {
-                document.getElementById("searchlog").innerText="Not available";
+                document.getElementById("searchlog").innerText = "Not available";
                 submitPickupBtn.removeAttribute("disabled");
             }
         }
@@ -177,10 +172,10 @@ const DOMRoutePoints = {
                 document.querySelector("#mapTable tbody").appendChild(tableRow);
                 for (let i = 0; i < 10; i++) {
                     let row = document.createElement("tr");
-                    row.setAttribute("class",`map${z}_row${i}`);
+                    row.setAttribute("class", `map${z}_row${i}`);
                     for (let j = 0; j < 100; j++) {
                         let td = document.createElement("td");
-                        td.setAttribute("id",`map${z}_cell${i}_${j}`);
+                        td.setAttribute("id", `map${z}_cell${i}_${j}`);
                         row.appendChild(td);
                     }
                     document.querySelector("#mapTable tbody").appendChild(row);
@@ -260,7 +255,7 @@ const DOMRoutePoints = {
         for (let seq in seqlist) {
             let domEl = `#map${taxiIndex}_cell${seqlist[seq]}`;
             if (status == "clear") {
-                document.querySelector(domEl).classList.remove("activepoints","mark-red");
+                document.querySelector(domEl).classList.remove("activepoints", "mark-red");
                 if (seq == (seqlist.length - 1)) {
                     document.querySelector(domEl).classList.add("mark-red");
                     refObj.dom(domEl, "save");
@@ -322,44 +317,38 @@ function CallTaxi(taxi) {
                 return false;
             }
             let nearestTaxi = CallTaxiPool.nearest(pickup, dest, id, strictTaxi);
-            if (nearestTaxi) {
-                if (nearestTaxi.id == id) {
-                    status = "picking up...";
-                    customer = cust;
-                    startPoint = pickup;
-                    destination = dest;
-                    distLeft = nearestTaxi.distance;
-                    totalFare += nearestTaxi.distance * baseFare;
-                    CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
-                    CallTaxiPool.displayStatus();
-                    DOMRoutePoints.update(id, status, startPoint, destination, distLeft);
-                    pageAutoScroll(id);
-                    setTimeout(function() {
-                        status = "running";
-                        CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+            if (!nearestTaxi) { return false }
+            if (nearestTaxi.id !== id) { return false }
+            status = "picking up...";
+            customer = cust;
+            startPoint = pickup;
+            destination = dest;
+            distLeft = nearestTaxi.distance;
+            totalFare += nearestTaxi.distance * baseFare;
+            CallTaxiPool.update(id, status, customer, startPoint, destination, distLeft, totalFare);
+            CallTaxiPool.displayStatus();
+            DOMRoutePoints.update(id, status, startPoint, destination, distLeft);
+            pageAutoScroll(id);
+            setTimeout(() => {
+                status = "running";
+                CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
+                CallTaxiPool.displayStatus();
+                DOMRoutePoints.update(id, "running", startPoint, destination, distLeft);
+                taxiRunTime = setInterval(() => {
+                    distLeft -= speed;
+                    if (distLeft <= 0) {
+                        clearInterval(taxiRunTime);
+                        status = "ready";
+                        CallTaxiPool.update(id, "ready", customer, destination, destination, 0, totalFare);
                         CallTaxiPool.displayStatus();
+                        DOMRoutePoints.update(id, "clear", startPoint, destination);
+                    } else {
+                        CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
                         DOMRoutePoints.update(id, "running", startPoint, destination, distLeft);
-                        taxiRunTime = setInterval(function() {
-                            distLeft -= speed;
-                            if (distLeft <= 0) {
-                                clearInterval(taxiRunTime);
-                                status = "ready";
-                                CallTaxiPool.update(id, "ready", customer, destination, destination, 0, totalFare);
-                                CallTaxiPool.displayStatus();
-                                DOMRoutePoints.update(id, "clear", startPoint, destination);
-                            } else {
-                                CallTaxiPool.update(id, "running", customer, startPoint, destination, distLeft, totalFare);
-                                DOMRoutePoints.update(id, "running", startPoint, destination, distLeft);
-                            }
-                        }, 5000);
-                    }, 5000);
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+                    }
+                }, 5000);
+            }, 5000);
+            return true;
         }
     }
 }
@@ -372,7 +361,6 @@ let maxicabs = new CallTaxi({ name: "maxicabs", cost: 5 });
 let chennaicabs = new CallTaxi({ name: "chennaicabs", cost: 6 });
 
 let taxiInstances = [ola, uber, zoomcar, fastrack, maxicabs, chennaicabs];
-
 DOMRoutePoints.init();
 
 setInterval(() => {
