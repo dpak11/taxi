@@ -13,7 +13,7 @@ In case you are seeing a CORS Alert message, try any 1 of the below:
 
 - Run it in a Node environment, or in any other web server to make `http` requests.
 
-- Copy the JSON data from `mpoints.json` and assign it to `const json` ([line #158](https://github.com/dpak11/taxi/blob/5ddd6eaf1c341b21bba029368576a46d9bc47226/public/taxis.js#L158)). Now you do not need `async` and `await`.
+- Copy the JSON data from `mpoints.json` and assign it to `const json` in [line #158](https://github.com/dpak11/taxi/blob/5ddd6eaf1c341b21bba029368576a46d9bc47226/public/taxis.js#L158). Remove line #157 and `async` and `await`.
 
 
 ## Running in Node:
