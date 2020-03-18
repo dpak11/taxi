@@ -153,14 +153,15 @@ const CallTaxiPool = {
 };
 
 const DOMRoutePoints = {
-    getJsonVals: function() {
-        return fetch("mpoints.json").then(response => response.json())
-            .then(json => json.points[Math.floor(Math.random() * json.points.length)]);
+    getJsonVals: async function() {
+        const mpoints = await fetch("mpoints.json");
+        const json = await mpoints.json();
+        return json.points[Math.floor(Math.random() * json.points.length)];
     },
     mapSeqPoints: {},
-    init: function() {
-        this.getJsonVals().then(jpoints => {
-            this.mapSeqPoints = jpoints;
+    init: async function() {
+        try {
+            this.mapSeqPoints = await this.getJsonVals();
             let mapBasePoints = [];
             for (let px in this.mapSeqPoints) {
                 mapBasePoints.push(...this.mapSeqPoints[px].split(","));
@@ -190,7 +191,7 @@ const DOMRoutePoints = {
                     document.querySelector(query).classList.add("highlight");
                 }
             });
-        }).catch((err) => {
+        } catch (err) {
             console.log(err);
             if (window.location.href.indexOf("http") == 0) {
                 alert("JSON file missing or invalid");
@@ -198,7 +199,7 @@ const DOMRoutePoints = {
                 alert("URL scheme must be 'http' or 'https' for CORS request. Try running from a Node server.")
             }
 
-        })
+        }
 
     },
     update: function(name, status, start, end, distLeft) {
